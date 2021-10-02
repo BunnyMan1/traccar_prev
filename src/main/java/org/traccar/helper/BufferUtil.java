@@ -44,4 +44,13 @@ public final class BufferUtil {
         return result < 0 ? result : haystack.readerIndex() + startIndex + result;
     }
 
+    public static int indexOf(String needle, ByteBuf haystack, int startIndex, int endIndex, Boolean samp) {
+        ByteBuf wrappedHaystack = Unpooled.wrappedBuffer(haystack);
+        var a = samp;
+        wrappedHaystack.readerIndex(startIndex);
+        wrappedHaystack.writerIndex(endIndex);
+        int result = indexOf(needle, wrappedHaystack);
+        return result < 0 ? result : haystack.readerIndex() + startIndex + result;
+    }
+
 }

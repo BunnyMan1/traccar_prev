@@ -37,14 +37,19 @@ public class ItsFrameDecoder extends BaseFrameDecoder {
     }
 
     @Override
-    protected Object decode(
-            ChannelHandlerContext ctx, Channel channel, ByteBuf buf) throws Exception {
+    protected Object decode(ChannelHandlerContext ctx, Channel channel, ByteBuf buf) throws Exception {
 
+        // Skipping to '$' symbol as it denotes starting of the protocol message
         while (buf.isReadable() && buf.getByte(buf.readerIndex()) != '$') {
             buf.skipBytes(1);
         }
 
-        int delimiterIndex = BufferUtil.indexOf("\r\n", buf);
+        // \r\n (CRLF / 0D0A) - Marks the end of a message. Multiple messages may be
+        // received at a time
+        int delimiterIndex = BufferUtil.indexOf("\r\n", buf) + buf.readerIndex();
+        // int delimiterIndex = BufferUtil.indexOf("\r\n", buf, buf.readerIndex(),
+        // buf.writerIndex(), true);
+
         if (delimiterIndex > MINIMUM_LENGTH) {
             return readFrame(buf, delimiterIndex, 2);
         } else {
