@@ -23,16 +23,21 @@ import org.traccar.helper.BufferUtil;
 
 public class ItsFrameDecoder extends BaseFrameDecoder {
 
-    private static final int MINIMUM_LENGTH = 20;
+    private static final int MINIMUM_LENGTH = 25;
 
     private ByteBuf readFrame(ByteBuf buf, int delimiterIndex, int skip) {
         int headerIndex = buf.indexOf(buf.readerIndex() + 1, buf.writerIndex(), (byte) '$');
         if (headerIndex > 0 && headerIndex < delimiterIndex) {
             return buf.readRetainedSlice(headerIndex - buf.readerIndex());
         } else {
-            ByteBuf frame = buf.readRetainedSlice(delimiterIndex - buf.readerIndex());
-            buf.skipBytes(skip);
-            return frame;
+            int sliceInd = delimiterIndex - buf.readerIndex();
+            if (sliceInd > 0) {
+                ByteBuf frame = buf.readRetainedSlice(sliceInd);
+                buf.skipBytes(skip);
+                return frame;
+            } else {
+                return null;
+            }
         }
     }
 
