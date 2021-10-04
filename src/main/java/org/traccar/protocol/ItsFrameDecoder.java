@@ -37,14 +37,13 @@ public class ItsFrameDecoder extends BaseFrameDecoder {
     }
 
     @Override
-    protected Object decode(
-            ChannelHandlerContext ctx, Channel channel, ByteBuf buf) throws Exception {
+    protected Object decode(ChannelHandlerContext ctx, Channel channel, ByteBuf buf) throws Exception {
 
         while (buf.isReadable() && buf.getByte(buf.readerIndex()) != '$') {
             buf.skipBytes(1);
         }
 
-        int delimiterIndex = BufferUtil.indexOf("\r\n", buf);
+        int delimiterIndex = BufferUtil.indexOf("\r\n", buf) + buf.readerIndex();
         if (delimiterIndex > MINIMUM_LENGTH) {
             return readFrame(buf, delimiterIndex, 2);
         } else {
