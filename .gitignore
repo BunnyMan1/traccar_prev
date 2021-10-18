@@ -12,3 +12,4 @@ out
 build
 src/main/java/org/traccar/protobuf
 bin/
+web/

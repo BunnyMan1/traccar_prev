@@ -1,0 +1,3 @@
+Compile:
+- gradle
+- gradle assemble || ./gradlew assemble
